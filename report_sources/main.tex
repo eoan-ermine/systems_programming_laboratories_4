@@ -476,6 +476,48 @@
     \item на границе этой области.
 \end{enumerate}
 
+\newpage
+\section{Перечень блок-схем}
+
+На рисунках ниже приведены блок-схемы используемых в программе алгоритмов (\ref{alg:main}).
+
+\begin{figure}[H]
+\centering
+\begin{tikzpicture}[
+    start chain=going below,
+    node distance=6mm and 60mm,
+]
+    \node [block] (start) {Начало main()};
+    \node [base, join] (OUTSIDE) {OUTSIDE = «Точка лежит вне заштрихованной области»};
+    \node [base, join] (INSIDE) {INSIDE = «Точка лежит в заштрихованной области»};
+    \node [base, join] (BORDERS) {BORDERS = «Точка лежит на границе заштрихованной области»};
+    \node [io, join] (input) {Ввод X, Y};
+    \node [base, join] (RSquare) {RSquare = X * X + Y * Y};
+
+    \node [decision, join] (if1) {RSquare > 1};
+    \node [io, right of = if1, node distance = 7cm, yshift=-1cm] (if1_true) {Вывод OUTSIDE};
+    \path [line] (if1) -| node [u,near start] {Да} (if1_true);
+    \node [decision, left of = if1, node distance = 5cm, yshift=-2cm] (if1_false) {$Y >= 0 \ \&\& \ Y <= 0.8$};
+    \path [line] (if1) -| node [u,near start] {Нет} (if1_false);
+
+    \node [io, left of = if1_false, node distance = 0 cm, yshift=-3cm] (if2_false) {Вывод OUTSIDE};
+    \node [decision, right of=if1_false, node distance = 5 cm, yshift=-2cm] (if2_true) {RSquare == 1 || \\ Y == 0 || Y == 0.8};
+    \path [line] (if1_false) -| node [u,near start] {Да} (if2_true);
+    \path [line] (if1_false) to node [r] {Нет}(if2_false);
+
+    \node [io, right of = if2_true, node distance = 5 cm, yshift=-4cm] (if3_true) {Вывод \\ BORDERS};
+    \path [line] (if2_true) -| node [u, near start] {Нет}(if3_true);
+    \node [io, left of = if2_true, node distance = 0 cm, yshift=-2cm] (if3_false) {Вывод INSIDE};
+    \path [line] (if2_true) to node [r] {Нет}(if3_false);
+
+    \node [block, join, yshift=-2cm] (finish) {Конец main()};
+    \path [line] (if1_true) |- (finish);
+    \path [line] (if2_false) |- (finish);
+    \path [line] (if3_true) |- (finish);
+\end{tikzpicture}
+\caption{Алгоритм функции \mintinline{cpp}{int main()}\label{alg:main}}
+\end{figure}
+
 \section{Ход работы}
 
 В листинге ниже приведен код разработанной программы (\ref{lst:main}):
@@ -489,6 +531,10 @@ constexpr double YMax = 0.8;
 constexpr double YMin = 0;
 
 int main() {
+    constexpr const char* OUTSIDE = "Точка лежит вне заштрихованной области";
+    constexpr const char* INSIDE = "Точка лежит в заштрихованной области";
+    constexpr const char* BORDERS = "Точка лежит на границе заштрихованной области";
+    
     double X, Y;
 
     std::cout << "X: ";
@@ -498,18 +544,16 @@ int main() {
 
     double RSquare = X * X + Y * Y;
     if (RSquare > 1) {
-        std::cout << "Точка находится вне заштрихованной области" << std::endl;
+        std::cout << OUTSIDE << std::endl;
     } else {
-        if (Y > 0 && Y < 0.8) {
-            if (RSquare == 1) {
-                std::cout << "Точка лежит на границе заштрихованной области" << std::endl;
+        if (Y >= 0 && Y <= 0.8) {
+            if (RSquare == 1 || Y == 0 || Y == 0.8) {
+                std::cout << BORDERS << std::endl;
             } else {
-                std::cout << "Точка лежит в заштрихованной области" << std::endl;
+                std::cout << INSIDE << std::endl;
             }
-        } else if (Y == 0 || Y == 0.8) {
-            std::cout << "Точка лежит на границе заштрихованной области" << std::endl;
         } else {
-            std::cout << "Точка лежит вне заштрихованной области" << std::endl;
+            std::cout << OUTSIDE << std::endl;
         }
     }
 }

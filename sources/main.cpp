@@ -4,6 +4,10 @@ constexpr double YMax = 0.8;
 constexpr double YMin = 0;
 
 int main() {
+    constexpr const char* OUTSIDE = "Точка лежит вне заштрихованной области";
+    constexpr const char* INSIDE = "Точка лежит в заштрихованной области";
+    constexpr const char* BORDERS = "Точка лежит на границе заштрихованной области";
+    
     double X, Y;
 
     std::cout << "X: ";
@@ -13,18 +17,16 @@ int main() {
 
     double RSquare = X * X + Y * Y;
     if (RSquare > 1) {
-        std::cout << "Точка находится вне заштрихованной области" << std::endl;
+        std::cout << OUTSIDE << std::endl;
     } else {
-        if (Y > 0 && Y < 0.8) {
-            if (RSquare == 1) {
-                std::cout << "Точка лежит на границе заштрихованной области" << std::endl;
+        if (Y >= 0 && Y <= 0.8) {
+            if (RSquare == 1 || Y == 0 || Y == 0.8) {
+                std::cout << BORDERS << std::endl;
             } else {
-                std::cout << "Точка лежит в заштрихованной области" << std::endl;
+                std::cout << INSIDE << std::endl;
             }
-        } else if (Y == 0 || Y == 0.8) {
-            std::cout << "Точка лежит на границе заштрихованной области" << std::endl;
         } else {
-            std::cout << "Точка лежит вне заштрихованной области" << std::endl;
+            std::cout << OUTSIDE << std::endl;
         }
     }
 }
